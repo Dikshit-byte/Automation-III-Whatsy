@@ -1,6 +1,7 @@
 const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const {Configuration,OpenAIApi} = require("openai");
+const spawn = require("child_process");
 
 dotenv.config();
 
@@ -88,14 +89,18 @@ function start(client) {
 
       // ! for images
       case "I: "|| "i: ":
-        client
-        .sendImage(message.from, "./diku.png", "diku", "My Photo")
-        .then((result) => {
-          // console.log("Result: ", result);
-        })
-        .catch((erro) => {
-          console.error("Error when sending: ", erro);
+        const pythonProcess = spawn('python',["./Walle.py",text]);
+        pythonProcess.stdout.on('data',(data)=>{
+            console.log(data);
         });
+        // client
+        // .sendImage(message.from, "./diku.png", "diku", "My Photo")
+        // .then((result) => {
+        //   // console.log("Result: ", result);
+        // })
+        // .catch((erro) => {
+        //   console.error("Error when sending: ", erro);
+        // });
         break;
 
 
