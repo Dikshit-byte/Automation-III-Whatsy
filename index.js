@@ -40,8 +40,7 @@ async function searchNotes(topic) {
 // }
 
 
-venom
-  .create({
+venom.create({
     session: "session-name",
     multidevice: true,
   })
@@ -61,7 +60,7 @@ function start(client) {
       ` 
       1. Chat:  Chit chat with ai\n\n\t\tFor example:\nc: What's your name?\nC: what's your name?\n
       2. Codex:  Get a solution of any programming question\n\n\t\tFor example:\nc: Write a code for linear search in c++\nC: Write a code for linear search in c++\n
-              `
+      `
       client
         .sendText(message.from, "Elliot")
         .then((result) => {
@@ -70,8 +69,13 @@ function start(client) {
         .catch((erro) => {
           console.error("Error when sending: ", erro);
         });
-    } else if (message.body === "A:" || message.body === "a:") {
-      client
+    } 
+    
+    switch(tag){
+
+      //& for audio files
+      case "A: "||"a: ":
+        client
         .sendVoice(message.from, "./song.mp3")
         .then((result) => {
           // console.log("Result: ", result);
@@ -79,8 +83,12 @@ function start(client) {
         .catch((erro) => {
           console.error("Error when sending: ", erro);
         });
-    } else if (message.body === "I:" || message.body === "i:") {
-      client
+        break;
+      
+
+      // ! for images
+      case "I: "|| "i: ":
+        client
         .sendImage(message.from, "./diku.png", "diku", "My Photo")
         .then((result) => {
           // console.log("Result: ", result);
@@ -88,25 +96,35 @@ function start(client) {
         .catch((erro) => {
           console.error("Error when sending: ", erro);
         });
-    } else if (message.body === "F:" || message.body === "f:") {
-      client
-        .sendFile(message.from, "./CV.pdf", "CV", "See my file in pdf")
-        .then((result) => {
-          // console.log("Result: ", result);
-        })
-        .catch((erro) => {
-          console.error("Error when sending: ", erro);
-        });
-    } else if(tag === "Q: " || tag === "q: "){
-      let result = await searchNotes(text);
-      client
-        .sendText(message.from, result)
-        .then((result) => {
-          // console.log("Result: ", result);
-        })
-        .catch((erro) => {
-          console.error("Error when sending: ", erro);
-        });
+        break;
+
+
+      //* for documents
+      case "F: "||"f: ":
+        client
+          .sendFile(message.from, "./CV.pdf", "CV", "See my file in pdf")
+          .then((result) => {
+            // console.log("Result: ", result);
+          })
+          .catch((erro) => {
+            console.error("Error when sending: ", erro);
+          });
+        break;
+
+
+      
+      // ~ for GPT-2.0
+      case "Q: "||"q: ":
+        let result = await searchNotes(text);
+        client
+          .sendText(message.from, result)
+          .then((result) => {
+            // console.log("Result: ", result);
+          })
+          .catch((erro) => {
+            console.error("Error when sending: ", erro);
+          });
+          break;
     }
   });
 }
