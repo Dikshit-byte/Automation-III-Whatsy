@@ -94,21 +94,24 @@ function start(client) {
           args: [text]
         };
 
+        let imgPath;
          PythonShell.run('./Walle.py', options, function (err, results) {
           if (err) 
             throw err;
           // Results is an array consisting of messages collected during execution
-          client
-        .sendImage(message.from, results, image, text)
+          console.log(results);
+          imgPath = results;
+        });
+        client
+        .sendImage (message.from, imgPath, text)
         .then((result) => {
           // console.log("Result: ", result);
         })
         .catch((erro) => {
           console.error("Error when sending: ", erro);
         });
-        });
-        break;
 
+        break;
 
       //* for documents
       case "F: "||"f: ":

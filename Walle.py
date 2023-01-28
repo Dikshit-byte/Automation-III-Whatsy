@@ -2,6 +2,7 @@ import openai
 import sys
 import os
 import wget
+from PIL import Image
 
 openai.organization = "org-XY7tvMhByFMbnaHiVRXoQjab"
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -19,7 +20,7 @@ def Dalle(query):
             size="1024x1024"
         )
         img_url = response['data'][0]['url']
-        wallpaper = wget.download(img_url,out='image')
+        wallpaper = wget.download(img_url)
         return wallpaper
         
 Dalle(user_query)
