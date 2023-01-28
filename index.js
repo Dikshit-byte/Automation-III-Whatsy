@@ -1,7 +1,7 @@
 const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const {Configuration,OpenAIApi} = require("openai");
-const spawn = require("child_process");
+const PythonShell = require('python-shell').PythonShell;
 
 dotenv.config();
 
@@ -39,7 +39,6 @@ async function searchNotes(topic) {
 //   });
 //   return code.data.choices[0].text;
 // }
-
 
 venom.create({
     session: "session-name",
@@ -89,18 +88,25 @@ function start(client) {
 
       // ! for images
       case "I: "|| "i: ":
-        const pythonProcess = spawn('python',["./Walle.py",text]);
-        pythonProcess.stdout.on('data',(data)=>{
-            console.log(data);
+        var options = {
+          mode: 'text',
+          pythonOptions: ['-u'],
+          args: [text]
+        };
+
+         PythonShell.run('./Walle.py', options, function (err, results) {
+          if (err) 
+            throw err;
+          // Results is an array consisting of messages collected during execution
+          client
+        .sendImage(message.from, results, image, text)
+        .then((result) => {
+          // console.log("Result: ", result);
+        })
+        .catch((erro) => {
+          console.error("Error when sending: ", erro);
         });
-        // client
-        // .sendImage(message.from, "./diku.png", "diku", "My Photo")
-        // .then((result) => {
-        //   // console.log("Result: ", result);
-        // })
-        // .catch((erro) => {
-        //   console.error("Error when sending: ", erro);
-        // });
+        });
         break;
 
 
