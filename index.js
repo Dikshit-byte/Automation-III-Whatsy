@@ -11,7 +11,7 @@ dotenv.config();
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -20,7 +20,7 @@ async function searchNotes(topic) {
   const chatResponse = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: topic,
-    temperature: 0.7,
+    temperature: 0.5,
     max_tokens: 1024,
     top_p: 1.0,
     frequency_penalty: 0.0,
@@ -31,14 +31,17 @@ async function searchNotes(topic) {
 }
 
 function dlImg(url, filepath) {
+  let imgName;
   options = {
     url: url,
-    dest: filepath,         // will be saved to /path/to/dest/photo
+    dest: filepath+"\\img",         // will be saved to /path/to/dest/photo
     extractFilename: true,
   };
-   download.image(options)
+  download.image(options)
   .then(({ filename }) => {
-    console.log('Saved to', filename)}).catch((err) => console.error(err));
+    imgName = filename
+  }).catch((err) => console.error(err));
+  return imgName;
 }
 
 async function searchImage(topic){
