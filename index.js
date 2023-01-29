@@ -4,14 +4,14 @@ const {Configuration,OpenAIApi} = require("openai");
 const wget = require("node-wget");
 // const PythonShell = require('python-shell').PythonShell;
 const exec = require('child_process').exec;
+const download = require('image-downloader');
 
 dotenv.config();
 
 var currentPath = process.cwd();
-
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -30,11 +30,15 @@ async function searchNotes(topic) {
   return chatResponse.data.choices[0].text;
 }
 
-function downloadImage(url, filepath) {
-  return download.image({
-     url,
-     dest: filepath 
-  });
+function dlImg(url, filepath) {
+  options = {
+    url: url,
+    dest: filepath,         // will be saved to /path/to/dest/photo
+    extractFilename: true,
+  };
+   download.image(options)
+  .then(({ filename }) => {
+    console.log('Saved to', filename)}).catch((err) => console.error(err));
 }
 
 async function searchImage(topic){
@@ -44,8 +48,9 @@ async function searchImage(topic){
     size: "1024x1024",
   });
   image_url = imgResponse.data.data[0].url;
-  let result = dlImg(image_url);
-  return result;
+  let result = dlImg(image_url,currentPath);
+  console.log(result);
+  // return result;
 }
 
 
