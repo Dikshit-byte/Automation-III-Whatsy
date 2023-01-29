@@ -1,13 +1,17 @@
 const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const {Configuration,OpenAIApi} = require("openai");
-const PythonShell = require('python-shell').PythonShell;
+const wget = require("node-wget");
+// const PythonShell = require('python-shell').PythonShell;
+const exec = require('child_process').exec;
 
 dotenv.config();
 
+var currentPath = process.cwd();
+
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -16,7 +20,7 @@ async function searchNotes(topic) {
   const chatResponse = await openai.createCompletion({
     model: "text-davinci-003",
     prompt: topic,
-    temperature: 0.3,
+    temperature: 0.7,
     max_tokens: 1024,
     top_p: 1.0,
     frequency_penalty: 0.0,
@@ -25,6 +29,25 @@ async function searchNotes(topic) {
   });
   return chatResponse.data.choices[0].text;
 }
+
+function downloadImage(url, filepath) {
+  return download.image({
+     url,
+     dest: filepath 
+  });
+}
+
+async function searchImage(topic){
+  const imgResponse = await openai.createImage({
+    prompt: topic,
+    n: 1,
+    size: "1024x1024",
+  });
+  image_url = imgResponse.data.data[0].url;
+  let result = dlImg(image_url);
+  return result;
+}
+
 
 //^ For help in code
 // async function codex(text) {
@@ -88,22 +111,10 @@ function start(client) {
 
       // ! for images
       case "I: "|| "i: ":
-        var options = {
-          mode: 'text',
-          pythonOptions: ['-u'],
-          args: [text]
-        };
-
-        let imgPath;
-         PythonShell.run('./Walle.py', options, function (err, results) {
-          if (err) 
-            throw err;
-          // Results is an array consisting of messages collected during execution
-          console.log(results);
-          imgPath = results;
-        });
+        let img = await searchImage(text);
         client
-        .sendImage (message.from, imgPath, text)
+        // .sendImage (message.from, img, text)
+        .sendText(message.from, "Image")
         .then((result) => {
           // console.log("Result: ", result);
         })

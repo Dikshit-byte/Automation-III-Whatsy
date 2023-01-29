@@ -4,7 +4,6 @@ import os
 import wget
 from PIL import Image
 
-openai.organization = "org-XY7tvMhByFMbnaHiVRXoQjab"
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 openai.Model.list()
