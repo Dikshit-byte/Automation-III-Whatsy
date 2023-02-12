@@ -2,7 +2,7 @@ const {spawn} = require('child_process');
 const fetch = require("isomorphic-unfetch");
 const { getDetails } = require('spotify-url-info')(fetch);
 
-let prompt = "https://open.spotify.com/track/4vUmTMuQqjdnvlZmAH61Qk?si=Wqn40Y1wQu2r3YiOa79ZFQ&utm_source=copy-link";
+let prompt = "https://open.spotify.com/track/4R8VBRb5nKbEfi1EIA2B7p?si=EoBTAaReRG6JBuiVWo0ABA&utm_source=whatsapp";
 
 let name;
 getDetails(prompt)
