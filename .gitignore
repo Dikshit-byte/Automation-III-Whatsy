@@ -3,4 +3,5 @@ tokens/
 img/
 music/
 .env/
+dl/.cache
 dl/

@@ -11,7 +11,7 @@ dotenv.config();
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: "process.env.OPENAI_API_KEY",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
