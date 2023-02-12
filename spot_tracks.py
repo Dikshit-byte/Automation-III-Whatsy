@@ -27,6 +27,3 @@ for file_path in allfile:
     dst_path = os.path.join(destination,os.path.basename(change_name))
     shutil.move("./dl/"+change_name,dst_path)
     print(f'Moved {file_path} -> {dst_path}')
-
-
-#this is the most hard code that i ever did on things for that
