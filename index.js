@@ -1,9 +1,7 @@
 const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const { Configuration, OpenAIApi } = require("openai");
-// const wget = require("node-wget");
-// const PythonShell = require('python-shell').PythonShell;
-// const exec = require("child_process").exec;
+const {spawn} = require("child_process");
 const download = require("image-downloader");
 
 dotenv.config();
@@ -11,7 +9,7 @@ dotenv.config();
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -30,9 +28,9 @@ async function searchNotes(topic) {
   return chatResponse.data.choices[0].text;
 }
 
-async function searchImage(topic) {
+async function searchImage(prompt) {
   const imgResponse = await openai.createImage({
-    prompt: topic,
+    prompt: prompt,
     n: 1,
     size: "1024x1024",
   });
@@ -40,7 +38,6 @@ async function searchImage(topic) {
   console.log(image_url);
   return image_url;
 }
-
 
 //^ For help in code
 // async function codex(text) {
@@ -90,10 +87,10 @@ function start(client) {
 
     switch (tag) {
       //& for audio files
-      case "A: ":
-        case "a: ":
+      case "M: ":
+      case "m: ":
         client
-          .sendVoice(message.from, "./song.mp3")
+          .sendVoice(message.from, "./music/song.mp3")
           .then((result) => {
             // console.log("Result: ", result);
           })
@@ -104,7 +101,7 @@ function start(client) {
 
       // ! for images
       case "I: ":
-        case "i: ":
+      case "i: ":
         let img = await searchImage(text);
         async function dlImg(url, filepath) {
           options = {
@@ -116,20 +113,18 @@ function start(client) {
             .image(options)
             .then(({ filename }) => {
               console.log(filename);
-              client
-                .sendImage(message.from, filename, text)
-                .catch((erro) => {
-                  console.error("Error when sending: ", erro);
-                });
+              client.sendImage(message.from, filename, text).catch((erro) => {
+                console.error("Error when sending: ", erro);
+              });
             })
             .catch((err) => console.error(err));
         }
-        dlImg(img,currentPath);
+        dlImg(img, currentPath);
         break;
 
       //* for documents
       case "F: ":
-        case "f: ":
+      case "f: ":
         client
           .sendFile(message.from, "./CV.pdf", "CV", "See my file in pdf")
           .then((result) => {
@@ -142,7 +137,7 @@ function start(client) {
 
       // ~ for GPT-2.0
       case "Q: ":
-        case "q: ":
+      case "q: ":
         let result = await searchNotes(text);
         client
           .sendText(message.from, result)
