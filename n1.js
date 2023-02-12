@@ -1,8 +1,9 @@
 const {spawn} = require('child_process');
 
-let link = "https://youtu.be/Sdq4T3iRV80";
+// let link = "https://youtu.be/Sdq4T3iRV80";
 
-const pyt = spawn('python',["./youtube_link.py",link]);
+let query = "Slow motion angreza";
+const pyt = spawn('python',["./youtube_search.py",query]);
     pyt.stdout.on('data',(data)=>{
         console.log(data.toString());
     });
