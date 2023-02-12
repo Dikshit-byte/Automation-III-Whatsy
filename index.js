@@ -1,15 +1,17 @@
 const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const { Configuration, OpenAIApi } = require("openai");
-const {spawn} = require("child_process");
 const download = require("image-downloader");
+const {spawn} = require('child_process');
+const fetch = require("isomorphic-unfetch");
+const { getDetails } = require('spotify-url-info')(fetch);
 
 dotenv.config();
 
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
 
@@ -90,7 +92,7 @@ function start(client) {
       case "M: ":
       case "m: ":
         client
-          .sendVoice(message.from, "./music/song.mp3")
+          .sendVoice(message.from,"./music/Abdul Hannan - Haaray.mp3")
           .then((result) => {
             // console.log("Result: ", result);
           })
