@@ -76,7 +76,7 @@ def singleLink():
     try:
         yt = YouTube(link)
     except exceptions.VideoUnavailable:
-        print(f'Video {link} is unavaialable, skipping.')
+        print(f'Video {link} is unavailable, skipping.')
     except KeyboardInterrupt:
         print("OOPs feelin' like very strong keyboard stroke⌨️")
     else:
@@ -95,7 +95,7 @@ def searchLink():
     try:
         yt = YouTube(link)
     except exceptions.VideoUnavailable:
-        print(f'Video {link} is unavaialable, skipping.')
+        print(f'Video {link} is unavailable, skipping.')
     except KeyboardInterrupt:
         print("OOPs feelin' like very strong keyboard stroke⌨️")
     else:
@@ -125,7 +125,7 @@ def playlist():
                 try:
                     yt = YouTube(url)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {url} is unavaialable, skipping.')
+                    print(f'Video {url} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -139,7 +139,7 @@ def playlist():
                 try:
                     yt = YouTube(url)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {url} is unavaialable, skipping.')
+                    print(f'Video {url} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -153,7 +153,7 @@ def playlist():
                 try:
                     yt = YouTube(url)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {url} is unavaialable, skipping.')
+                    print(f'Video {url} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -184,7 +184,7 @@ def channelLink():
                 try:
                     yt = YouTube(url)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {url} is unavaialable, skipping.')
+                    print(f'Video {url} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -198,7 +198,7 @@ def channelLink():
                 try:
                     yt = YouTube(video)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {video} is unavaialable, skipping.')
+                    print(f'Video {video} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -212,7 +212,7 @@ def channelLink():
                 try:
                     yt = YouTube(video)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {video} is unavaialable, skipping.')
+                    print(f'Video {video} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -247,7 +247,7 @@ def channelSearch():
                 try:
                     yt = YouTube(url)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {url} is unavaialable, skipping.')
+                    print(f'Video {url} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
@@ -261,7 +261,7 @@ def channelSearch():
                 try:
                     yt = YouTube(video)
                 except exceptions.VideoUnavailable:
-                    print(f'Video {video} is unavaialable, skipping.')
+                    print(f'Video {video} is unavailable, skipping.')
                 except KeyboardInterrupt:
                     print("OOPs feelin' like very strong keyboard stroke⌨️")
                 else:
