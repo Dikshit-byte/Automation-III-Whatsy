@@ -2,16 +2,16 @@ const venom = require("venom-bot");
 const dotenv = require("dotenv");
 const { Configuration, OpenAIApi } = require("openai");
 const download = require("image-downloader");
-const {spawn} = require('child_process');
+const { spawn } = require("child_process");
 const fetch = require("isomorphic-unfetch");
-const { getDetails } = require('spotify-url-info')(fetch);
+const { getDetails } = require("spotify-url-info")(fetch);
 
 dotenv.config();
 
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "process.env.OPENAI_API_KEY",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -78,7 +78,8 @@ function start(client) {
       2. Codex:  Get a solution of any programming question\n\n\t\tFor example:\nc: Write a code for linear search in c++\nC: Write a code for linear search in c++\n
       `;
       client
-        .sendText(message.from, "Hey bruh!!")
+        // .sendText(message.from, "Hey bruh!!")
+        .sendVoice(message.from,"./music/Rosa Walton, Hallie Coggins - I Really Want to Stay at Your House.mp3")
         .then((result) => {
           // console.log("Result: ", result);
         })
@@ -89,16 +90,37 @@ function start(client) {
 
     switch (tag) {
       //& for audio files
-      case "M: ":
-      case "m: ":
-        client
-          .sendVoice(message.from,"./music/Abdul Hannan - Haaray.mp3")
-          .then((result) => {
-            // console.log("Result: ", result);
-          })
-          .catch((erro) => {
-            console.error("Error when sending: ", erro);
+      case "S: ":
+      case "s: ":
+        let filter_prompt = text.split("/");
+        console.log(filter_prompt[3]);
+
+        async function spot_track_dl() {
+          const pyt = await spawn("python", ["./spot_tracks.py", text]);
+          setTimeout(music_f,30000);
+          pyt.stdout.on("data", (data) => {
+            console.log(data.toString());
           });
+        }
+        spot_track_dl();
+        function music_f() {
+          getDetails(text)
+            .then((data) => {
+              let name = `${data.preview.artist} - ${data.preview.title}`;
+              console.log(name);
+              return name;
+            })
+            .then((data) => {
+              client
+                .sendVoice(message.from, `./music/${data}.mp3`)
+                .then((result) => {
+                  // console.log("Result: ", result);
+                })
+                .catch((erro) => {
+                  console.error("Error when sending: ", erro);
+                });
+            });
+        }
         break;
 
       // ! for images

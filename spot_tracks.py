@@ -8,6 +8,7 @@ source = './dl/'
 destination = './music/'
 #link of playlist, song or album by input from user
 link = str(sys.argv[1])
+# link = "https://open.spotify.com/track/6kp18rnZeE67pAEWASkS6H?si=l_KAoR4dSH6ABY-BzcGg3A&utm_source=copy-link"
 subprocess.run(f'spotidl {link}')
 
  #file finding pattern

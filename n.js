@@ -22,26 +22,4 @@ const pyt = await spawn('python',["./spot_tracks.py",prompt]);
 });
 }
 spot_track_dl();
-
-// switch(filter_prompt[3]){
-//     case 'playlist':
-//         console.log("\nEntering Playlist");
-//         const pyt = spawn('python',["./spot_playlist.py",prompt]);
-//         pyt.stdout.on('data',(data)=>{
-//         console.log("Done",data.toString())
-// });
-//     break;
-
-//     case 'track':
-//         console.log("\nEntering Tracks")
-//         const pyt1 = spawn('python',["./spot_tracks.py",prompt]);
-//         pyt1.stdout.on('data',(data)=>{
-//         console.log("Done",data.toString())
-//     });
-//         break;
-    
-//         default:
-//             console.log("Sorry, But pass the link or correct link");
-//             break;
-// }
 console.log("Done")
