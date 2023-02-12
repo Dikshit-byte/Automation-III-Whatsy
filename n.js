@@ -1,6 +1,3 @@
-const {spawn} = require('child_process');
-const fetch = require("isomorphic-unfetch");
-const { getDetails } = require('spotify-url-info')(fetch);
 
 let prompt = "https://open.spotify.com/track/2RttW7RAu5nOAfq6YFvApB?si=c88a25e2b3754556";
 
@@ -48,6 +45,3 @@ spot_track_dl();
 //             break;
 // }
 console.log("Done")
-
-// This is for the single tracks to download from spotidl umm... what should i do is making diff. function for playlist handling in spotidl is best choice or what
-
