@@ -130,43 +130,49 @@ function start(client) {
 
       case "Y1: ":
       case "y1: ":
-        console.log("Started Downloading...");
-        youtube.metadata(text).then(
-          (data) => {
-            console.log(data.title);
-            let title = data.title;
-            let title_slice = title.slice(0,15);
-            youtube_link(title_slice);
-            setTimeout(music_y,30000);
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-        async function youtube_link(title) {
-          console.log("Started Downloading...")
-          const pyt = await spawn("python", ["./youtube_link.py", text,title]);
-          pyt.stdout.on("data", (data) => {
-            console.log(data.toString());
+        function youtube_link(link,title_slice){
+          console.log("Started Downloading... -> ",title_slice);
+          try{
+          yt.convertAudio({
+            url: link,
+            itag: 140,
+            directoryDownload: "./ytMusic/",
+            title: title_slice
           });
+        }catch(err){
+          console.error(err);
         }
-        function music_y() {
-          youtube.metadata(text).then(
-            (data) => {
-              console.log(data.title);
-              let title = data.title;
-              let title_slice = title.slice(0,15);
-              console.log("Sending...");
-              client
-              .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
-              .then((result) => {
-                // console.log("Result: ", result);
-              })
-              .catch((erro) => {
-                console.error("Error when sending: ", erro);
-              });
+        }
+        async function searching(link){
+          await youtube.metadata(link).then((data)=>{
+            // console.log(data.title);
+            title = data.title;
+            let title_slice = title.slice(0,5);
+            youtube_link(text,title_slice);
+            setTimeout(music_y,30000);
+        },function (err){
+            console.log(err);
+        })
+        }
+        async function music_y() {
+          console.log("Sending...");  
+          await youtube.metadata(text).then((data)=>{
+            // console.log(data.title);
+            title = data.title;
+            let title_slice = title.slice(0,5);
+            client
+            .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
+            .then((result) => {
+              // console.log("Result: ", result);
+            })
+            .catch((erro) => {
+              console.error("Error when sending: ", erro);
             });
+        },(err)=>{
+            console.log(err);
+        })
         }
+        searching(text);
         break;
 
 
@@ -175,19 +181,23 @@ function start(client) {
       case "y2: ":
         function youtube_link1(link,title_slice){
           console.log("Started Downloading... -> ",title_slice)
+          try{
            yt.convertAudio({
             url: link,
             itag: 140,
             directoryDownload: "./ytMusic/",
             title: title_slice
         });
+      }catch(err){
+        console.error(err);
+      }
         }
-        async function searching(){
+        async function searching1(){
           await search(text,opts,function(err,results){
-              if(err)return console.log(err);
+              if(err)console.log(err);
               let link = results[0].link;
               let title_name = results[0].title;
-              let title_slice = title_name.slice(0,15);
+              let title_slice = title_name.slice(0,5);
               console.log(title_slice," -> ", link);
               youtube_link1(link,title_slice);
               setTimeout(music_y1,20000);
@@ -195,10 +205,10 @@ function start(client) {
         }
         async function music_y1() {
           await search(text,opts,function(err,results){
-            if(err)return console.log(err);
+            if(err)console.log(err);
             let link = results[0].link;
             let title_name = results[0].title;
-            let title_slice = title_name.slice(0,15);
+            let title_slice = title_name.slice(0,5);
             console.log("Sending...");
             client
             .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
@@ -210,7 +220,7 @@ function start(client) {
             });
             });
         }
-        searching();
+        searching1();
         break;
 
       // ! for images
