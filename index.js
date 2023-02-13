@@ -139,7 +139,7 @@ function start(client) {
       case "y1: ":
         let title = undefined;
         console.log("Started Downloading...");
-        youtube.metadata(link).then(
+        youtube.metadata(text).then(
           (data) => {
             console.log(data.title);
             title = data.title;
@@ -158,7 +158,48 @@ function start(client) {
         }
         function music_y() {
           let title = undefined;
-          youtube.metadata(link).then(
+          youtube.metadata(text).then(
+            (data) => {
+              console.log(data.title);
+              title = data.title;
+              client
+              .sendVoice(message.from, `./ytMusic/${title}.mp3`)
+              .then((result) => {
+                // console.log("Result: ", result);
+              })
+              .catch((erro) => {
+                console.error("Error when sending: ", erro);
+              });
+            });
+        }
+        break;
+
+
+      // ^for youtube search link
+      case "Y2: ":
+      case "y2: ":
+        let title1 = undefined;
+        console.log("Started Downloading...");
+        youtube.metadata(text).then(
+          (data) => {
+            console.log(data.title);
+            title1 = data.title;
+            youtube_link(title1);
+            setTimeout(music_y,50000);
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+        async function youtube_link(title1) {
+          const pyt = await spawn("python", ["./youtube_search.py", text,title1]);
+          pyt.stdout.on("data", (data) => {
+            console.log(data.toString());
+          });
+        }
+        function music_y() {
+          let title = undefined;
+          youtube.metadata(text).then(
             (data) => {
               console.log(data.title);
               title = data.title;
