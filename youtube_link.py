@@ -13,7 +13,7 @@ title = str(sys.argv[2])
 local_download_path = "C:\\projects\\node\\venom\\ytMusic\\"
 
 def searchLink(link,title):
-    print(title)
+    print("\n"+title+"\n")
     try:
         yt = YouTube(link)
     except exceptions.VideoUnavailable:
@@ -23,14 +23,16 @@ def searchLink(link,title):
     else:
         print(f'\n' + fuchsia + 'Downloading: ',yt.title, '~ viewed', yt.views, 'times.')
         out_file = yt.streams.filter(only_audio=True).first().download(local_download_path)
-        # print(out_file)
+        print(out_file)
         print(f'\nFinished downloading:  {yt.title}' + reset_color)
         # base, ext = os.path.splitext(out_file)
         new_file = local_download_path+title+'.mp3'
         print(new_file)
+        video_file = local_download_path+yt.title+'.mp4'
+        print(video_file)
+        # os.rename(video_file,new_file)
         isExisting = os.path.exists(new_file)
-        if(isExisting == False):
-            os.rename(out_file, new_file)
+        os.rename(f'{out_file}',f'{new_file}') if(isExisting == False) else os.remove(f'{out_file}')
             # print(new_file)
 
 #main function

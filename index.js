@@ -6,6 +6,8 @@ const { spawn } = require("child_process");
 const fetch = require("isomorphic-unfetch");
 const { getDetails } = require("spotify-url-info")(fetch);
 const youtube = require("youtube-metadata-from-url");
+const search = require('youtube-search');
+const yt = require("yt-converter");
 dotenv.config();
 
 var currentPath = process.cwd();
@@ -14,6 +16,11 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+
+var opts = {
+  maxResults: 5,
+  key: process.env.YOUTUBE_API_KEY
+};
 
 //& for normal searches or find the answer of any general query
 async function searchNotes(topic) {
@@ -40,20 +47,6 @@ async function searchImage(prompt) {
   console.log(image_url);
   return image_url;
 }
-
-//^ For help in code
-// async function codex(text) {
-//   const code = await openai.createCompletion({
-//     model: "text-davinci-003",
-//     prompt: text,
-//     temperature: 0.1,
-//     max_tokens: 1024,
-//     top_p: 1.0,
-//     frequency_penalty: 0.0,
-//     presence_penalty: 0.2,
-//   });
-//   return code.data.choices[0].text;
-// }
 
 venom
   .create({
@@ -137,33 +130,35 @@ function start(client) {
 
       case "Y1: ":
       case "y1: ":
-        let title = undefined;
         console.log("Started Downloading...");
         youtube.metadata(text).then(
           (data) => {
             console.log(data.title);
-            title = data.title;
-            youtube_link(title);
-            setTimeout(music_y,50000);
+            let title = data.title;
+            let title_slice = title.slice(0,15);
+            youtube_link(title_slice);
+            setTimeout(music_y,30000);
           },
           (err) => {
             console.log(err);
           }
         );
         async function youtube_link(title) {
+          console.log("Started Downloading...")
           const pyt = await spawn("python", ["./youtube_link.py", text,title]);
           pyt.stdout.on("data", (data) => {
             console.log(data.toString());
           });
         }
         function music_y() {
-          let title = undefined;
           youtube.metadata(text).then(
             (data) => {
               console.log(data.title);
-              title = data.title;
+              let title = data.title;
+              let title_slice = title.slice(0,15);
+              console.log("Sending...");
               client
-              .sendVoice(message.from, `./ytMusic/${title}.mp3`)
+              .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
               .then((result) => {
                 // console.log("Result: ", result);
               })
@@ -178,41 +173,44 @@ function start(client) {
       // ^for youtube search link
       case "Y2: ":
       case "y2: ":
-        let title1 = undefined;
-        console.log("Started Downloading...");
-        youtube.metadata(text).then(
-          (data) => {
-            console.log(data.title);
-            title1 = data.title;
-            youtube_link(title1);
-            setTimeout(music_y,50000);
-          },
-          (err) => {
-            console.log(err);
-          }
-        );
-        async function youtube_link(title1) {
-          const pyt = await spawn("python", ["./youtube_search.py", text,title1]);
-          pyt.stdout.on("data", (data) => {
-            console.log(data.toString());
+        function youtube_link1(link,title_slice){
+          console.log("Started Downloading... -> ",title_slice)
+           yt.convertAudio({
+            url: link,
+            itag: 140,
+            directoryDownload: "./ytMusic/",
+            title: title_slice
+        });
+        }
+        async function searching(){
+          await search(text,opts,function(err,results){
+              if(err)return console.log(err);
+              let link = results[0].link;
+              let title_name = results[0].title;
+              let title_slice = title_name.slice(0,15);
+              console.log(title_slice," -> ", link);
+              youtube_link1(link,title_slice);
+              setTimeout(music_y1,20000);
           });
         }
-        function music_y() {
-          let title = undefined;
-          youtube.metadata(text).then(
-            (data) => {
-              console.log(data.title);
-              title = data.title;
-              client
-              .sendVoice(message.from, `./ytMusic/${title}.mp3`)
-              .then((result) => {
-                // console.log("Result: ", result);
-              })
-              .catch((erro) => {
-                console.error("Error when sending: ", erro);
-              });
+        async function music_y1() {
+          await search(text,opts,function(err,results){
+            if(err)return console.log(err);
+            let link = results[0].link;
+            let title_name = results[0].title;
+            let title_slice = title_name.slice(0,15);
+            console.log("Sending...");
+            client
+            .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
+            .then((result) => {
+              // console.log("Result: ", result);
+            })
+            .catch((erro) => {
+              console.error("Error when sending: ", erro);
+            });
             });
         }
+        searching();
         break;
 
       // ! for images
