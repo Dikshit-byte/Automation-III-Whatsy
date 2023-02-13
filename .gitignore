@@ -6,3 +6,4 @@ music/
 dl/.cache
 dl/
 ytMusic/
+__pycache__/
