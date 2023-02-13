@@ -32,7 +32,7 @@ def searchLink(link,title):
         print(video_file)
         # os.rename(video_file,new_file)
         isExisting = os.path.exists(new_file)
-        os.rename(f'{out_file}',f'{new_file}') if(isExisting == False) else os.remove(f'{out_file}')
+        os.rename(f'{out_file}',f'{new_file}') if(isExisting == False) else os.remove(f'{out_file}')    
             # print(new_file)
 
 #main function
