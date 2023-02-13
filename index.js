@@ -5,7 +5,7 @@ const download = require("image-downloader");
 const { spawn } = require("child_process");
 const fetch = require("isomorphic-unfetch");
 const { getDetails } = require("spotify-url-info")(fetch);
-
+const youtube = require("youtube-metadata-from-url");
 dotenv.config();
 
 var currentPath = process.cwd();
@@ -81,7 +81,7 @@ function start(client) {
         .sendText(message.from, "Hey bruh!!")
         // .sendVoice(
         //   message.from,
-        //   "./music/Rosa Walton, Hallie Coggins - I Really Want to Stay at Your House.mp3"
+        //   "./ytMusic/Slow Motion Angreza Full Video - Bhaag Milkha BhaagFarhan AkhtarSukhwinder Singh.mp3"
         // )
         .then((result) => {
           // console.log("Result: ", result);
@@ -107,13 +107,13 @@ function start(client) {
             spot_track_dl(data);
           });
         async function spot_track_dl(name) {
-          const pyt = await spawn("python", ["./spot_tracks.py", text,name]);
-          setTimeout(music_f, 30000);
+          const pyt = await spawn("python", ["./spot_tracks.py", text, name]);
+          setTimeout(music_s, 30000);
           pyt.stdout.on("data", (data) => {
             console.log(data.toString());
           });
         }
-        function music_f() {
+        function music_s() {
           getDetails(text)
             .then((data) => {
               let name = `${data.preview.artist} - ${data.preview.title}`;
@@ -129,6 +129,47 @@ function start(client) {
                 .catch((erro) => {
                   console.error("Error when sending: ", erro);
                 });
+            });
+        }
+        break;
+
+      // ~ for youtube_audio
+
+      case "Y1: ":
+      case "y1: ":
+        let title = undefined;
+        console.log("Started Downloading...");
+        youtube.metadata(link).then(
+          (data) => {
+            console.log(data.title);
+            title = data.title;
+            youtube_link(title);
+            setTimeout(music_y,50000);
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+        async function youtube_link(title) {
+          const pyt = await spawn("python", ["./youtube_link.py", text,title]);
+          pyt.stdout.on("data", (data) => {
+            console.log(data.toString());
+          });
+        }
+        function music_y() {
+          let title = undefined;
+          youtube.metadata(link).then(
+            (data) => {
+              console.log(data.title);
+              title = data.title;
+              client
+              .sendVoice(message.from, `./ytMusic/${title}.mp3`)
+              .then((result) => {
+                // console.log("Result: ", result);
+              })
+              .catch((erro) => {
+                console.error("Error when sending: ", erro);
+              });
             });
         }
         break;
