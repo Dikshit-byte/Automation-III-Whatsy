@@ -5,15 +5,12 @@ import sys
 fuchsia = '\033[38;2;255;00;255m'  # color as hex #FF00FF
 reset_color = '\033[92m'
 
-# download single video in audio only
-
 args = str(sys.argv[1])
 title = str(sys.argv[2])
 
 local_download_path = "C:\\projects\\node\\venom\\ytMusic\\"
 
 def searchLink(link,title):
-    # print(title)
     try:
         yt = YouTube(link)
     except exceptions.VideoUnavailable:
@@ -28,10 +25,6 @@ def searchLink(link,title):
         new_file = local_download_path+title+'.mp3'
         print(new_file)
         os.rename(out_file, new_file)
-        # video_file = local_download_path+title+'.mp4'
-        # isExisting = os.path.exists(new_file)
-        # os.rename(out_file, new_file) if(isExisting == False) else os.remove(video_file)
-            # print(new_file)
 
 #main function
 if __name__ == '__main__':

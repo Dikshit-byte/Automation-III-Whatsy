@@ -1,11 +1,8 @@
 from pytube import YouTube, exceptions
 import os
-from colorama import Fore
 import sys
 fuchsia = '\033[38;2;255;00;255m'  # color as hex #FF00FF
 reset_color = '\033[92m'
-
-# download single video in audio only
 
 args = str(sys.argv[1])
 title = str(sys.argv[2])
@@ -25,15 +22,12 @@ def searchLink(link,title):
         out_file = yt.streams.filter(only_audio=True).first().download(local_download_path)
         print(out_file)
         print(f'\nFinished downloading:  {yt.title}' + reset_color)
-        # base, ext = os.path.splitext(out_file)
         new_file = local_download_path+title+'.mp3'
         print(new_file)
         video_file = local_download_path+yt.title+'.mp4'
         print(video_file)
-        # os.rename(video_file,new_file)
         isExisting = os.path.exists(new_file)
         os.rename(f'{out_file}',f'{new_file}') if(isExisting == False) else os.remove(f'{out_file}')    
-            # print(new_file)
 
 #main function
 if __name__ == '__main__':
