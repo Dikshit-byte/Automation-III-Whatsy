@@ -13,13 +13,13 @@ dotenv.config();
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
 var opts = {
   maxResults: 5,
-  key: process.env.YOUTUBE_API_KEY
+  key: "AIzaSyA3uZWYns3tZ4mBy4l_YTV-sOO33iPqn3k"
 };
 
 //& for normal searches or find the answer of any general query
@@ -92,7 +92,7 @@ function start(client) {
         getDetails(text)
           .then((data) => {
             // console.log(data);
-            name = `${data.preview.artist} - ${data.preview.title}`;
+            let name = `${data.preview.artist} - ${data.preview.title}`;
             // console.log(name);
             return name;
           })
@@ -100,7 +100,7 @@ function start(client) {
             spot_track_dl(data);
           });
         async function spot_track_dl(name) {
-          const pyt = await spawn("python", ["./spot_tracks.py", text, name]);
+          const pyt = await spawn("python", ["./dl/spot_tracks.py", text, name]);
           setTimeout(music_s, 30000);
           pyt.stdout.on("data", (data) => {
             console.log(data.toString());
