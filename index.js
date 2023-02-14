@@ -6,20 +6,26 @@ const { spawn } = require("child_process");
 const fetch = require("isomorphic-unfetch");
 const { getDetails } = require("spotify-url-info")(fetch);
 const youtube = require("youtube-metadata-from-url");
-const search = require('youtube-search');
+const search = require("youtube-search");
 const yt = require("yt-converter");
+// const urlToBase64 = require('@aistiak/url-to-base64');
 dotenv.config();
 
 var currentPath = process.cwd();
 // OpenAI model Api
 const configuration = new Configuration({
-  apiKey: "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",
+  apiKey: process.env.OPENAI_API_KEY,
 });
-const openai = new OpenAIApi(configuration);
+
+const configuration1 = new Configuration({
+  apiKey: process.env.OPENAI_API_KEY1,
+});
+const openai = new OpenAIApi(configuration1);
+const openai1 = new OpenAIApi(configuration1);
 
 var opts = {
   maxResults: 5,
-  key: "AIzaSyA3uZWYns3tZ4mBy4l_YTV-sOO33iPqn3k"
+  key: process.env.YOUTUBE_API_KEY,
 };
 
 //& for normal searches or find the answer of any general query
@@ -37,8 +43,22 @@ async function searchNotes(topic) {
   return chatResponse.data.choices[0].text;
 }
 
+//^ For help in code
+async function codex(text) {
+  const code = await openai1.createCompletion({
+    model: "text-davinci-003",
+    prompt: text,
+    temperature: 0.2,
+    max_tokens: 1024,
+    top_p: 1.0,
+    frequency_penalty: 0.0,
+    presence_penalty: 0.2,
+  });
+  return code.data.choices[0].text;
+}
+
 async function searchImage(prompt) {
-  const imgResponse = await openai.createImage({
+  const imgResponse = await openai1.createImage({
     prompt: prompt,
     n: 1,
     size: "1024x1024",
@@ -100,7 +120,11 @@ function start(client) {
             spot_track_dl(data);
           });
         async function spot_track_dl(name) {
-          const pyt = await spawn("python", ["./dl/spot_tracks.py", text, name]);
+          const pyt = await spawn("python", [
+            "./dl/spot_tracks.py",
+            text,
+            name,
+          ]);
           setTimeout(music_s, 30000);
           pyt.stdout.on("data", (data) => {
             console.log(data.toString());
@@ -130,95 +154,101 @@ function start(client) {
 
       case "Y1: ":
       case "y1: ":
-        function youtube_link(link,title_slice){
-          console.log("Started Downloading... -> ",title_slice);
-          try{
-          yt.convertAudio({
-            url: link,
-            itag: 140,
-            directoryDownload: "./ytMusic/",
-            title: title_slice
-          });
-        }catch(err){
-          console.error(err);
+        function youtube_link(link, title_slice) {
+          console.log("Started Downloading... -> ", title_slice);
+          try {
+            yt.convertAudio({
+              url: link,
+              itag: 140,
+              directoryDownload: "./ytMusic/",
+              title: title_slice,
+            });
+          } catch (err) {
+            console.error(err);
+          }
         }
-        }
-        async function searching(link){
-          await youtube.metadata(link).then((data)=>{
-            // console.log(data.title);
-            title = data.title;
-            let title_slice = title.slice(0,5);
-            youtube_link(text,title_slice);
-            setTimeout(music_y,30000);
-        },function (err){
-            console.log(err);
-        })
+        async function searching(link) {
+          await youtube.metadata(link).then(
+            (data) => {
+              // console.log(data.title);
+              title = data.title;
+              let title_slice = title.slice(1, 6);
+              youtube_link(text, title_slice);
+              setTimeout(music_y, 12000);
+            },
+            function (err) {
+              console.log(err);
+            }
+          );
         }
         async function music_y() {
-          console.log("Sending...");  
-          await youtube.metadata(text).then((data)=>{
-            // console.log(data.title);
-            title = data.title;
-            let title_slice = title.slice(0,5);
-            client
-            .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
-            .then((result) => {
-              // console.log("Result: ", result);
-            })
-            .catch((erro) => {
-              console.error("Error when sending: ", erro);
-            });
-        },(err)=>{
-            console.log(err);
-        })
+          console.log("Sending...");
+          await youtube.metadata(text).then(
+            (data) => {
+              // console.log(data.title);
+              title = data.title;
+              let title_slice = title.slice(1, 6);
+              // console.log(title_slice);
+              client
+                .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
+                .then((result) => {
+                  // console.log("Result: ", result);
+                })
+                .catch((erro) => {
+                  console.error("Error when sending: ", erro);
+                });
+            },
+            (err) => {
+              console.log(err);
+            }
+          );
         }
         searching(text);
         break;
 
-
       // ^for youtube search link
       case "Y2: ":
       case "y2: ":
-        function youtube_link1(link,title_slice){
-          console.log("Started Downloading... -> ",title_slice)
-          try{
-           yt.convertAudio({
-            url: link,
-            itag: 140,
-            directoryDownload: "./ytMusic/",
-            title: title_slice
-        });
-      }catch(err){
-        console.error(err);
-      }
+        function youtube_link1(link, title_slice) {
+          console.log("Started Downloading... -> ", title_slice);
+          try {
+            yt.convertAudio({
+              url: link,
+              itag: 140,
+              directoryDownload: "./ytMusic/",
+              title: title_slice,
+            });
+          } catch (err) {
+            console.error(err);
+          }
         }
-        async function searching1(){
-          await search(text,opts,function(err,results){
-              if(err)console.log(err);
-              let link = results[0].link;
-              let title_name = results[0].title;
-              let title_slice = title_name.slice(0,5);
-              console.log(title_slice," -> ", link);
-              youtube_link1(link,title_slice);
-              setTimeout(music_y1,20000);
+        async function searching1() {
+          await search(text, opts, function (err, results) {
+            if (err) console.log(err);
+            let link = results[0].link;
+            let title_name = results[0].title;
+            let title_slice = title_name.slice(0, 5);
+            console.log(title_slice, " -> ", link);
+            youtube_link1(link, title_slice);
+            setTimeout(music_y1, 12000);
           });
         }
         async function music_y1() {
-          await search(text,opts,function(err,results){
-            if(err)console.log(err);
+          await search(text, opts, function (err, results) {
+            if (err) console.log(err);
             let link = results[0].link;
             let title_name = results[0].title;
-            let title_slice = title_name.slice(0,5);
+            let title_slice = title_name.slice(0, 5);
             console.log("Sending...");
             client
-            .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
-            .then((result) => {
-              // console.log("Result: ", result);
-            })
-            .catch((erro) => {
-              console.error("Error when sending: ", erro);
-            });
-            });
+              .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
+              .then((result) => {
+                // console.log("Result: ", result);
+              })
+              .catch((erro) => {
+                console.error("Error when sending: ", erro);
+              });
+          });
         }
         searching1();
         break;

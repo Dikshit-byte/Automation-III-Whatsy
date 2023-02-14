@@ -8,3 +8,4 @@ dl/.spotdl-cache
 ytMusic/
 __pycache__/
 testing/
+.spotdl-cache
