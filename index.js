@@ -8,10 +8,14 @@ const { getDetails } = require("spotify-url-info")(fetch);
 const youtube = require("youtube-metadata-from-url");
 const search = require("youtube-search");
 const yt = require("yt-converter");
-// const urlToBase64 = require('@aistiak/url-to-base64');
+
+
+// For future if there's a need for sending base64image
+// const urlToBase64 = require('@aistiak/url-to-base64'); 
 dotenv.config();
 
 var currentPath = process.cwd();
+
 // OpenAI model Api
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -24,7 +28,7 @@ const openai = new OpenAIApi(configuration1);
 const openai1 = new OpenAIApi(configuration1);
 
 var opts = {
-  maxResults: 5,
+  maxResults: 2,
   key: process.env.YOUTUBE_API_KEY,
 };
 
@@ -43,20 +47,6 @@ async function searchNotes(topic) {
   return chatResponse.data.choices[0].text;
 }
 
-//^ For help in code
-// async function codex(text) {
-//   const code = await openai1.createCompletion({
-//     model: "text-davinci-003",
-//     prompt: text,
-//     temperature: 0.2,
-//     max_tokens: 1024,
-//     top_p: 1.0,
-//     frequency_penalty: 0.0,
-//     presence_penalty: 0.2,
-//   });
-//   return code.data.choices[0].text;
-// }
-
 async function searchImage(prompt) {
   const imgResponse = await openai1.createImage({
     prompt: prompt,
@@ -67,6 +57,10 @@ async function searchImage(prompt) {
   console.log(image_url);
   return image_url;
 }
+
+// ^ Minify the object
+const books={B_1:"./books/Biography/Ikigai _ the Japanese secret to a long and happy life",B_2:"./books/Biography/Napoleon_ A Biography",B_3:"./books/Biography/Rich Dad Poor Dad",B_4:"./books/Biography/VIVEKANAND BIOGRAPHY",B_5:"./books/Biography/Wings of fire",E_1:"./books/Erotic/Dark-Desire",E_2:"./books/Erotic/rachel-g-ultimate-pleasure",E_3:"./books/Erotic/The-Roommate-by-Rosie-Danan",E_4:"./books/Erotic/You-had-me-at-hola",F_1:"./books/Fantasy/alices-adventures-in-wonderland",F_2:"./books/Fantasy/The-Adventures-of-Sherlock-Holmes",F_3:"./books/Fantasy/The-Canterville-Ghost",F_4:"./books/Fantasy/The-Ghost-Pirates",F_5:"./books/Fantasy/Treasure-Island",H_1:"./books/History/A HISTORY OF INDIA",H_2:"./books/History/A-History-of-the-Maratha-People",H_3:"./books/History/a-history-of-the-world1",N_1:"./books/Novel/Half Girlfriend by Chetan Bhagat",N_2:"./books/Novel/Healing-Her-Heart",N_3:"./books/Novel/One Indian Girl by Chetan Bhagat",N_4:"./books/Novel/The-Almost-Perfect-Murder",S_1:"./books/Spiritual/Bhagavad-Gita-Hindi",S_2:"./books/Spiritual/Chanakya Neeti",T_1:"./books/Travel/Around-the-World-in-80-Days"};
+
 
 venom
   .create({
@@ -85,19 +79,14 @@ function start(client) {
     const tag = cutPiece[0] + ": ";
     const text = cutPiece[1];
     if (message.body === "Hi" && message.isGroupMsg === false) {
-      // await client.sendMessage(msg.from, "Hey there! I'm a bot and my boss will be available after 11 pm tonight. So keep ur messages to urself until 11😁");
       ` 
       1. Chat:  Chit chat with ai\n\n\t\tFor example:\nc: What's your name?\nC: what's your name?\n
       2. Codex:  Get a solution of any programming question\n\n\t\tFor example:\nc: Write a code for linear search in c++\nC: Write a code for linear search in c++\n
       `;
       client
         .sendText(message.from, "Hey bruh!!")
-        // .sendVoice(
-        //   message.from,
-        //   "./ytMusic/Slow Motion Angreza Full Video - Bhaag Milkha BhaagFarhan AkhtarSukhwinder Singh.mp3"
-        // )
         .then((result) => {
-          // console.log("Result: ", result);
+          console.log("Done 👍\n");
         })
         .catch((erro) => {
           console.error("Error when sending: ", erro);
@@ -105,22 +94,35 @@ function start(client) {
     }
 
     switch (tag) {
+      // ~ for GPT-2.0
+      case "Q: ":
+      case "q: ":
+        let result = await searchNotes(text);
+        client
+          .sendText(message.from, result)
+          .then((result) => {
+            console.log("Done 👍\n");
+          })
+          .catch((erro) => {
+            console.error("Error when sending: ", erro);
+          });
+        break;
+
+
       //& for audio files
       case "S: ":
       case "s: ":
         let name = undefined;
         getDetails(text)
           .then((data) => {
-            // console.log(data);
             let name = `${data.preview.artist} - ${data.preview.title}`;
-            // console.log(name);
             return name;
           })
           .then((data) => {
             spot_track_dl(data);
           });
-        async function spot_track_dl(name) {
-          const pyt = await spawn("python", [
+        function spot_track_dl(name) {
+          const pyt = spawn("python", [
             "./dl/spot_tracks.py",
             text,
             name,
@@ -138,10 +140,10 @@ function start(client) {
               return name;
             })
             .then((data) => {
-              client
+               client
                 .sendVoice(message.from, `./music/${data}.mp3`)
                 .then((result) => {
-                  // console.log("Result: ", result);
+                  console.log("Done 👍\n");
                 })
                 .catch((erro) => {
                   console.error("Error when sending: ", erro);
@@ -150,8 +152,8 @@ function start(client) {
         }
         break;
 
-      // ~ for youtube_audio
 
+      // ~ for youtube_audio
       case "Y1: ":
       case "y1: ":
         function youtube_link(link, title_slice) {
@@ -170,11 +172,10 @@ function start(client) {
         async function searching(link) {
           await youtube.metadata(link).then(
             (data) => {
-              // console.log(data.title);
               title = data.title;
               let title_slice = title.slice(1, 6);
               youtube_link(text, title_slice);
-              setTimeout(music_y, 12000);
+              setTimeout(music_y, 15000);
             },
             function (err) {
               console.log(err);
@@ -185,14 +186,12 @@ function start(client) {
           console.log("Sending...");
           await youtube.metadata(text).then(
             (data) => {
-              // console.log(data.title);
               title = data.title;
               let title_slice = title.slice(1, 6);
-              // console.log(title_slice);
               client
                 .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
                 .then((result) => {
-                  // console.log("Result: ", result);
+                  console.log("Done 👍\n");
                 })
                 .catch((erro) => {
                   console.error("Error when sending: ", erro);
@@ -205,6 +204,7 @@ function start(client) {
         }
         searching(text);
         break;
+
 
       // ^for youtube search link
       case "Y2: ":
@@ -230,20 +230,19 @@ function start(client) {
             let title_slice = title_name.slice(0, 5);
             console.log(title_slice, " -> ", link);
             youtube_link1(link, title_slice);
-            setTimeout(music_y1, 12000);
+            setTimeout(music_y1, 15000);
           });
         }
         async function music_y1() {
           await search(text, opts, function (err, results) {
             if (err) console.log(err);
-            let link = results[0].link;
             let title_name = results[0].title;
             let title_slice = title_name.slice(0, 5);
             console.log("Sending...");
             client
               .sendVoice(message.from, `./ytMusic/${title_slice}.mp3`)
               .then((result) => {
-                // console.log("Result: ", result);
+                console.log("Done 👍\n");
               })
               .catch((erro) => {
                 console.error("Error when sending: ", erro);
@@ -252,6 +251,7 @@ function start(client) {
         }
         searching1();
         break;
+
 
       // ! for images
       case "I: ":
@@ -267,7 +267,11 @@ function start(client) {
             .image(options)
             .then(({ filename }) => {
               console.log(filename);
-              client.sendImage(message.from, filename, text).catch((erro) => {
+              client.sendImage(message.from, filename, text)
+              .then((result)=>{
+                console.log("Done 👍\n");
+              })
+              .catch((erro) => {
                 console.error("Error when sending: ", erro);
               });
             })
@@ -276,27 +280,16 @@ function start(client) {
         dlImg(img, currentPath);
         break;
 
-      //* for documents
-      case "F: ":
-      case "f: ":
+        
+      //* for books pdf
+      case "B: ":
+      case "b: ":
+        let book_name = books[text].split("/");
+        console.log(book_name[3]);
         client
-          .sendFile(message.from, "./CV.pdf", "CV", "See my file in pdf")
+          .sendFile(message.from, `${books[text]}.pdf`, `${books[text]}`)
           .then((result) => {
-            // console.log("Result: ", result);
-          })
-          .catch((erro) => {
-            console.error("Error when sending: ", erro);
-          });
-        break;
-
-      // ~ for GPT-2.0
-      case "Q: ":
-      case "q: ":
-        let result = await searchNotes(text);
-        client
-          .sendText(message.from, result)
-          .then((result) => {
-            // console.log("Result: ", result);
+            console.log("Done 👍\n");
           })
           .catch((erro) => {
             console.error("Error when sending: ", erro);
