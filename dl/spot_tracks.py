@@ -14,19 +14,16 @@ song_name = str(sys.argv[2])
 print(f'{song_link}  ->  {song_name}')
 
 isExisting = os.path.exists(path+song_name+'.mp3')
-print(isExisting)
-if(isExisting == False):
-    link = song_link
-    subprocess.run(f'spotdl {link}')
-else:
-    print("Already Existed")
+# print(isExisting)
+subprocess.run(f'spotdl {song_link}') if(isExisting == False) else print("Already Existed")
 
 #  file finding pattern
 allfile = glob.glob('*.mp3*',recursive = True)
-print(allfile)
+# print(allfile)
 
 # #for all files in dl folder to move into music folder
 for file_path in allfile:
     print("The file path is -> ",file_path)
     shutil.move("./"+file_path,path)
     print(f'Moved {file_path} -> {path}')
+    print("Song Downloaded")
