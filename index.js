@@ -44,18 +44,18 @@ async function searchNotes(topic) {
 }
 
 //^ For help in code
-async function codex(text) {
-  const code = await openai1.createCompletion({
-    model: "text-davinci-003",
-    prompt: text,
-    temperature: 0.2,
-    max_tokens: 1024,
-    top_p: 1.0,
-    frequency_penalty: 0.0,
-    presence_penalty: 0.2,
-  });
-  return code.data.choices[0].text;
-}
+// async function codex(text) {
+//   const code = await openai1.createCompletion({
+//     model: "text-davinci-003",
+//     prompt: text,
+//     temperature: 0.2,
+//     max_tokens: 1024,
+//     top_p: 1.0,
+//     frequency_penalty: 0.0,
+//     presence_penalty: 0.2,
+//   });
+//   return code.data.choices[0].text;
+// }
 
 async function searchImage(prompt) {
   const imgResponse = await openai1.createImage({
