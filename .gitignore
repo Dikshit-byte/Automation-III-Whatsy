@@ -6,6 +6,6 @@ music/
 dl/.cache
 dl/.spotdl-cache
 ytMusic/
+.spotdl-cache
 __pycache__/
 testing/
-.spotdl-cache
