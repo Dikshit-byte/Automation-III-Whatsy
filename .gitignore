@@ -2,9 +2,9 @@ node_modules/
 tokens/
 img/
 music/
-.env/
+.env
 dl/.cache
-dl/
+dl/.spotdl-cache
 ytMusic/
 __pycache__/
 testing/
