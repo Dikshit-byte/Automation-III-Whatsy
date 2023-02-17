@@ -84,7 +84,7 @@ function start(client) {
     switch (message.body) {
       case "Hi":
         client
-          .sendText(message.from, "*Hey* bruh!!")
+          .sendText(message.from, `*Hey* bruh!! I'm *Rootbot* - a advanced AI bot. I was made by my master *'Doma'* or you know him by *Dikshit*`)
           .then((result) => {
             // log("Done 👍\n");
           })
@@ -319,7 +319,7 @@ function start(client) {
               title = data.title;
               let title_slice = title.slice(1, 6);
               youtube_link(text, title_slice);
-              setTimeout(music_y, 15000);
+              setTimeout(music_y, 30000);
             },
             function (err) {
               log(err);
@@ -373,7 +373,7 @@ function start(client) {
             let title_slice = title_name.slice(0, 5);
             log(title_slice, " -> ", link);
             youtube_link1(link, title_slice);
-            setTimeout(music_y1, 15000);
+            setTimeout(music_y1, 30000);
           });
         }
         async function music_y1() {
