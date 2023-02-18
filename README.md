@@ -1,4 +1,5 @@
 # ❇️❇️ Automation-IV-Whatsy
+ --> The preview of Rootbot may contains bugs but will be useful.
 How to Get Started?
 
 1. Clone this repo into your local machine.
