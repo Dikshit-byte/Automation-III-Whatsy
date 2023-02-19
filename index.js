@@ -8,6 +8,7 @@ const { getDetails } = require("spotify-url-info")(fetch);
 const youtube = require("youtube-metadata-from-url");
 const search = require("youtube-search");
 const yt = require("yt-converter");
+const cohere = require('cohere-ai');
 // For future if there's a need for sending base64image
 // const urlToBase64 = require('@aistiak/url-to-base64');
 
@@ -32,6 +33,27 @@ var opts = {
   maxResults: 2,
   key: process.env.YOUTUBE_API_KEY,
 };
+
+
+//* Cohere API configuration
+
+cohere.init(process.env.COHERE_API_KEY);
+async function cohereAI(topic){
+  const response = await cohere.generate({
+    model: 'command-xlarge-20221108',
+    prompt: topic,
+    max_tokens: 300,
+    temperature: 0.9,
+    k: 0,
+    p: 0.75,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stop_sequences: [],
+    return_likelihoods: 'NONE'
+  });
+  return response.body.generations[0].text;
+};
+
 
 //& for normal searches or find the answer of any general query
 async function searchNotes(topic) {
@@ -257,6 +279,22 @@ function start(client) {
           });
         break;
 
+
+        // ^ for cohere-ai
+        case "C: ":
+      case "c: ":
+        let result1 = await cohereAI(text);
+        log("Sending...➡️\n");
+        client
+          .sendText(message.from, result1)
+          .then((result) => {
+            log("Done 👍\n");
+          })
+          .catch((erro) => {
+            error("Error when sending: ", erro);
+          });
+        break;
+
       //& for audio files
       case "S: ":
       case "s: ":
@@ -437,6 +475,8 @@ function start(client) {
             error("Error when sending: ", erro);
           });
         break;
+
+        
     }
   });
 }
